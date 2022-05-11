@@ -1,4 +1,6 @@
 #include "imgui_window.h"
+#include "ScreenGrab.h"
+#include "wincodec.h"
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 namespace imgui_window {
@@ -120,9 +122,9 @@ ImVec2 GetGuiWindowSize() {
 }
 bool init() {
     wc = {sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL,
-          _T("DWM 截图工具"), NULL};
+          _T("DWM Screenshot"), NULL};
     ::RegisterClassEx(&wc);
-    hwnd = ::CreateWindow(wc.lpszClassName, _T("注入dwm.exe完成截图"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL,
+    hwnd = ::CreateWindow(wc.lpszClassName, _T("DWM Screenshot"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL,
                           NULL, wc.hInstance, NULL);
 
     if (!CreateDeviceD3D(hwnd)) {
@@ -141,7 +143,7 @@ bool init() {
     (void)io;
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\simhei.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+    io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\CascadiaMono.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     // ImGui::StyleColorsClassic();
@@ -192,6 +194,16 @@ ID3D11ShaderResourceView *CreateDwmScreenShotShaderResourceView(void *data) {
         subResource.SysMemPitch      = desc.Width * 4;
         subResource.SysMemSlicePitch = 0;
         g_pd3dDevice->CreateTexture2D(&desc, &subResource, &pTexture);
+
+        // screenshot
+        time_t t = time(0); // get current time
+        struct tm now;
+        localtime_s(&now, &t);
+
+        wchar_t filename[80];
+        wcsftime(filename, 80, L"%Y%m%d_%H%M%S.bmp", &now);
+
+        DirectX::SaveWICTextureToFile(g_pd3dDeviceContext, pTexture, GUID_ContainerFormatBmp, filename);
 
         IM_ASSERT(pTexture != NULL);
 

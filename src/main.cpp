@@ -63,11 +63,11 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
             if (g_pDwmCaptureTextureView) {
                 ImGui::SetNextWindowPos({0, 0}, ImGuiCond_Always);
                 ImGui::SetNextWindowSize(imgui_window::GetGuiWindowSize(), ImGuiCond_Always);
-                //设置窗口的padding为0是图片控件充满窗口
+                // Setting the padding of the window to 0 means that the picture control fills the window
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-                //设置窗口为无边框
+                // Set the window to be borderless
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-                //无标题栏，无法拉伸
+                // No title bar, can't stretch
                 ImGui::SetNextWindowBgAlpha(0);
                 static bool window = true;
                 ImGui::Begin("BackGround",
@@ -90,7 +90,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
 
                 ImGui::SetNextWindowPos({0, 0}, ImGuiCond_Always);
                 ImGui::SetNextWindowSize(imgui_window::GetGuiWindowSize(), ImGuiCond_Always);
-                ImGui::Begin(u8"DWM.EXE 截图",
+                ImGui::Begin(u8"DWM.EXE Screenshot",
                              0,
                              ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
                                  ImGuiWindowFlags_AlwaysAutoResize);
@@ -105,18 +105,18 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
 
                 if (show_text) {
 
-                    ImGui::Text(u8"符号url:  %s", pdb_url.c_str());
-                    ImGui::Text(u8"下载进度:  %f", DownloadProgress.load());
-                    ImGui::Text(u8"当前状态:  %s",
-                                DownloadErro.load() ? u8"下载失败"
+                    ImGui::Text(u8"Symbol url:  %s", pdb_url.c_str());
+                    ImGui::Text(u8"Download progress:  %f", DownloadProgress.load());
+                    ImGui::Text(u8"Current state:  %s",
+                                DownloadErro.load() ? u8"Download failed"
                                 : DownloadProgress.load() == 100.f
-                                    ? dwm_symbol_ready() ? u8"偏移获取完毕" : u8"分析符号中"
-                                    : u8"正在下载");
+                                    ? dwm_symbol_ready() ? u8"Offset acquisition complete" : u8"Analyzing symbols..."
+                                    : u8"Downloading...");
 
                     for (size_t idx = 0; idx < dwm_symbol::symbol_num; idx++)
-                        ImGui::Text(u8"偏移 0x%x", dwm_symbol::hook_offsets[idx]);
+                        ImGui::Text(u8"Offset 0x%x", dwm_symbol::hook_offsets[idx]);
                 } else {
-                    if (ImGui::Button(u8"点击初始化")) {
+                    if (ImGui::Button(u8"Click to start")) {
                         show_text = true;
                         std::thread([=, &DownloadProgress, &DownloadErro]() {
                             CBindStatusCallback *StatusCallback = CBindStatusCallback::GenerateAnInstance();
@@ -126,7 +126,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
                             std::vector<uint8_t> data;
                             open_binary_file(dwm_symbol::symbol_name, data);
                             if (!dwm_symbol::init(data.data())) {
-                                PrintErro("获取符号失败!");
+                                PrintErro("Failed to fetch symbol!");
                             }
 #else
                             auto hr =
@@ -135,7 +135,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
                                 std::vector<uint8_t> data;
                                 open_binary_file(dwm_symbol::symbol_name, data);
                                 if (!dwm_symbol::init(data.data())) {
-                                    PrintErro("获取符号失败!");
+                                    PrintErro("Failed to fetch symbol!");
                                 }
                             } else {
                                 DownloadErro = true;
@@ -149,7 +149,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
 
                 if (dwm_symbol_ready()) {
                     static bool captureing = false;
-                    if (ImGui::Button(u8"点击测试截图")) {
+                    if (ImGui::Button(u8"Click to take screenshot")) {
                         captureing = true;
                         std::thread([]() {
                             EnableDebugPriv();
@@ -222,31 +222,31 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
                                                 VirtualFreeEx(hDwm, RemoteBuffer, 0, MEM_RELEASE);
                                             }
                                             if (ExitCode == -1) {
-                                                PrintErro("截图失败!");
+                                                PrintErro("Failed to take screenshot!");
                                             }
                                             CloseHandle(hRemoteThread);
                                             CloseHandle(hDwm);
                                             return;
                                         } else {
-                                            PrintErro("获取返回值失败!");
+                                            PrintErro("Failed to get return value!");
                                             CloseHandle(hRemoteThread);
                                             CloseHandle(hDwm);
                                             return;
                                         }
                                     } else {
-                                        PrintErro("创建线程失败!");
+                                        PrintErro("Failed to create thread!");
                                         CloseHandle(hDwm);
                                         return;
                                     }
 
                                 } else {
-                                    PrintErro("申请内存失败!");
+                                    PrintErro("Failed to request memory!");
                                     CloseHandle(hDwm);
                                     return;
                                 }
 
                             } else {
-                                PrintErro("打开进程失败!");
+                                PrintErro("Failed to open process! Please relaunch as administrator.");
                                 return;
                             }
                         }).detach();
@@ -264,7 +264,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
                         else
                             cursor = "\\";
 
-                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), u8"截取中请等待[ %s ]", cursor);
+                        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), u8"Intercepting, please wait... [ %s ]", cursor);
                     }
                 }
 
@@ -277,6 +277,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
         if (!g_pDwmCaptureTextureView && DwmCaptureBitmap.load()) {
             g_pDwmCaptureTextureView =
                 imgui_window::CreateDwmScreenShotShaderResourceView(DwmCaptureBitmap.load()->data());
+            buffer_to_file_bin(DwmCaptureBitmap.load()->data(), DwmCaptureBitmap.load()->size(), "test.bmp");
         }
     }
 
