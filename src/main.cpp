@@ -277,7 +277,7 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
         if (!g_pDwmCaptureTextureView && DwmCaptureBitmap.load()) {
             g_pDwmCaptureTextureView =
                 imgui_window::CreateDwmScreenShotShaderResourceView(DwmCaptureBitmap.load()->data());
-            buffer_to_file_bin(DwmCaptureBitmap.load()->data(), DwmCaptureBitmap.load()->size(), "test.bmp");
+            //buffer_to_file_bin(DwmCaptureBitmap.load()->data(), DwmCaptureBitmap.load()->size(), "test.bmp");
         }
     }
 
