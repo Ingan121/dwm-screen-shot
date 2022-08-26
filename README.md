@@ -11,7 +11,7 @@
     * DRM (Widevine, PlayReady)
       * Note that the whole screen will be scrambled/encrypted if HDCP 2.2 is being used.
   * Understand how multiplane overlay (MPO) and fullscreen optimization (FSO) works
-    * Figure out what are being rendered in MPO (they won't appear in this program's screenshot
+    * Figure out what are being rendered in MPO (they won't appear in this program's screenshot)
 
 ## Changes from the original repository
 * Translated the whole program to English.
