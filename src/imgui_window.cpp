@@ -207,15 +207,22 @@ ID3D11ShaderResourceView *CreateDwmScreenShotShaderResourceView(void *data) {
 
         IM_ASSERT(pTexture != NULL);
 
-        // Create texture view
-        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-        ZeroMemory(&srvDesc, sizeof(srvDesc));
-        srvDesc.Format                    = desc.Format;
-        srvDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
-        srvDesc.Texture2D.MipLevels       = desc.MipLevels;
-        srvDesc.Texture2D.MostDetailedMip = 0;
-        g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, &ret);
         pTexture->Release();
+        destroy();
+        /* if (strcmp(__argv[1], "autoexit") == 0) {
+            pTexture->Release();
+            destroy();
+        } else {
+            // Create texture view
+            D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+            ZeroMemory(&srvDesc, sizeof(srvDesc));
+            srvDesc.Format                    = desc.Format;
+            srvDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
+            srvDesc.Texture2D.MipLevels       = desc.MipLevels;
+            srvDesc.Texture2D.MostDetailedMip = 0;
+            g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, &ret);
+            pTexture->Release();
+        }*/
     }
 
     return ret;

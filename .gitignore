@@ -433,3 +433,5 @@ iOSInjectionProject/
 # Scons
 *.o
 .sconsign.dblite
+
+*.bmp
