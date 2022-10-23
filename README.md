@@ -18,6 +18,9 @@
 * Translated the whole program to English.
 * Automatically save the taken screenshot to file.
 * Automatically run as administrator.
+* Automatically take screenshot on launch.
+* Automatically exit after taking screenshot.
+* Only download symbol once - try deleting dxgi.pdb if it's not working after update.
 
 ## Build
 * From console (original repo's method):
