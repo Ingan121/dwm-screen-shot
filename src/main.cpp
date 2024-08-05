@@ -152,106 +152,108 @@ int WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPS
 
                 if (dwm_symbol_ready()) {
                     static bool capturing = false;
-                    capturing = true;
-                    std::thread([]() {
-                        EnableDebugPriv();
-                        auto   pid  = FindProcess("dwm.exe");
-                        HANDLE hDwm = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
-                        if (hDwm) {
-                            for (size_t idx = 0; idx < dwm_symbol::symbol_num; idx++) {
-                                reinterpret_cast<__int64 *>(shellcode::payload +
-                                                            shellcode::rva::hook_offsets)[idx] =
-                                    (__int64)dwm_symbol::hook_offsets[idx];
-                            }
-                            LPVOID RemoteBuffer = VirtualAllocEx(hDwm,
-                                                                    0,
-                                                                    sizeof(shellcode::payload),
-                                                                    MEM_COMMIT | MEM_RESERVE,
-                                                                    PAGE_EXECUTE_READWRITE);
-                            if (RemoteBuffer) {
-                                SIZE_T WriteSize = 0;
-                                WriteProcessMemory(
-                                    hDwm, RemoteBuffer, shellcode::payload, sizeof(shellcode::payload), &WriteSize);
-                                SECURITY_ATTRIBUTES sec_attr{};
-                                DWORD               tid;
-                                HANDLE              hRemoteThread =
-                                    CreateRemoteThread(hDwm,
-                                                        &sec_attr,
-                                                        NULL,
-                                                        reinterpret_cast<LPTHREAD_START_ROUTINE>(
-                                                            (char *)RemoteBuffer + shellcode::rva::DwmCaptureScreen),
-                                                        (LPVOID)0,
-                                                        NULL,
-                                                        &tid);
-                                if (hRemoteThread) {
-                                    WaitForSingleObject(hRemoteThread, INFINITE);
-                                    DWORD ExitCode = 0;
-                                    if (GetExitCodeThread(hRemoteThread, &ExitCode)) {
-                                        if (ExitCode == 1) {
-                                            __int64 CaptureBitmapPointer = 0;
+                    if (!capturing) {
+                        capturing = true;
+                        std::thread([]() {
+                            EnableDebugPriv();
+                            auto   pid  = FindProcess("dwm.exe");
+                            HANDLE hDwm = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
+                            if (hDwm) {
+                                for (size_t idx = 0; idx < dwm_symbol::symbol_num; idx++) {
+                                    reinterpret_cast<__int64 *>(shellcode::payload +
+                                                                shellcode::rva::hook_offsets)[idx] =
+                                        (__int64)dwm_symbol::hook_offsets[idx];
+                                }
+                                LPVOID RemoteBuffer = VirtualAllocEx(hDwm,
+                                                                     0,
+                                                                     sizeof(shellcode::payload),
+                                                                     MEM_COMMIT | MEM_RESERVE,
+                                                                     PAGE_EXECUTE_READWRITE);
+                                if (RemoteBuffer) {
+                                    SIZE_T WriteSize = 0;
+                                    WriteProcessMemory(
+                                        hDwm, RemoteBuffer, shellcode::payload, sizeof(shellcode::payload), &WriteSize);
+                                    SECURITY_ATTRIBUTES sec_attr{};
+                                    DWORD               tid;
+                                    HANDLE              hRemoteThread =
+                                        CreateRemoteThread(hDwm,
+                                                           &sec_attr,
+                                                           NULL,
+                                                           reinterpret_cast<LPTHREAD_START_ROUTINE>(
+                                                               (char *)RemoteBuffer + shellcode::rva::DwmCaptureScreen),
+                                                           (LPVOID)0,
+                                                           NULL,
+                                                           &tid);
+                                    if (hRemoteThread) {
+                                        WaitForSingleObject(hRemoteThread, INFINITE);
+                                        DWORD ExitCode = 0;
+                                        if (GetExitCodeThread(hRemoteThread, &ExitCode)) {
+                                            if (ExitCode == 1) {
+                                                __int64 CaptureBitmapPointer = 0;
 
-                                            SIZE_T readSize = 0;
-                                            ReadProcessMemory(hDwm,
-                                                                (LPCVOID)((DWORD64)RemoteBuffer +
-                                                                        shellcode::rva::CaptureBitmapPointer),
-                                                                &CaptureBitmapPointer,
-                                                                sizeof(CaptureBitmapPointer),
-                                                                &readSize);
-                                            ReadProcessMemory(
-                                                hDwm,
-                                                (LPCVOID)((DWORD64)RemoteBuffer + shellcode::rva::CaptureHeight),
-                                                &CaptureHeight,
-                                                sizeof(CaptureHeight),
-                                                &readSize);
-                                            ReadProcessMemory(
-                                                hDwm,
-                                                (LPCVOID)((DWORD64)RemoteBuffer + shellcode::rva::CaptureWidth),
-                                                &CaptureWidth,
-                                                sizeof(CaptureWidth),
-                                                &readSize);
+                                                SIZE_T readSize = 0;
+                                                ReadProcessMemory(hDwm,
+                                                                  (LPCVOID)((DWORD64)RemoteBuffer +
+                                                                            shellcode::rva::CaptureBitmapPointer),
+                                                                  &CaptureBitmapPointer,
+                                                                  sizeof(CaptureBitmapPointer),
+                                                                  &readSize);
+                                                ReadProcessMemory(
+                                                    hDwm,
+                                                    (LPCVOID)((DWORD64)RemoteBuffer + shellcode::rva::CaptureHeight),
+                                                    &CaptureHeight,
+                                                    sizeof(CaptureHeight),
+                                                    &readSize);
+                                                ReadProcessMemory(
+                                                    hDwm,
+                                                    (LPCVOID)((DWORD64)RemoteBuffer + shellcode::rva::CaptureWidth),
+                                                    &CaptureWidth,
+                                                    sizeof(CaptureWidth),
+                                                    &readSize);
 
-                                            std::vector<uint8_t> *bitmap = new std::vector<uint8_t>(
-                                                (size_t)CaptureWidth * (size_t)CaptureHeight * 4 +
-                                                    sizeof(D3D11_TEXTURE2D_DESC),
-                                                '\0');
-                                            ReadProcessMemory(hDwm,
-                                                                (LPCVOID)CaptureBitmapPointer,
-                                                                bitmap->data(),
-                                                                bitmap->size(),
-                                                                &readSize);
+                                                std::vector<uint8_t> *bitmap = new std::vector<uint8_t>(
+                                                    (size_t)CaptureWidth * (size_t)CaptureHeight * 4 +
+                                                        sizeof(D3D11_TEXTURE2D_DESC),
+                                                    '\0');
+                                                ReadProcessMemory(hDwm,
+                                                                  (LPCVOID)CaptureBitmapPointer,
+                                                                  bitmap->data(),
+                                                                  bitmap->size(),
+                                                                  &readSize);
 
-                                            DwmCaptureBitmap = bitmap;
-                                            VirtualFreeEx(hDwm, RemoteBuffer, 0, MEM_RELEASE);
+                                                DwmCaptureBitmap = bitmap;
+                                                VirtualFreeEx(hDwm, RemoteBuffer, 0, MEM_RELEASE);
+                                            }
+                                            if (ExitCode == -1) {
+                                                PrintErro("Failed to take screenshot!");
+                                            }
+                                            CloseHandle(hRemoteThread);
+                                            CloseHandle(hDwm);
+                                            return;
+                                        } else {
+                                            PrintErro("Failed to get return value!");
+                                            CloseHandle(hRemoteThread);
+                                            CloseHandle(hDwm);
+                                            return;
                                         }
-                                        if (ExitCode == -1) {
-                                            PrintErro("Failed to take screenshot!");
-                                        }
-                                        CloseHandle(hRemoteThread);
-                                        CloseHandle(hDwm);
-                                        return;
                                     } else {
-                                        PrintErro("Failed to get return value!");
-                                        CloseHandle(hRemoteThread);
+                                        PrintErro("Failed to create thread!");
                                         CloseHandle(hDwm);
                                         return;
                                     }
+
                                 } else {
-                                    PrintErro("Failed to create thread!");
+                                    PrintErro("Failed to request memory!");
                                     CloseHandle(hDwm);
                                     return;
                                 }
 
                             } else {
-                                PrintErro("Failed to request memory!");
-                                CloseHandle(hDwm);
+                                PrintErro("Failed to open process! Please relaunch as administrator.");
                                 return;
                             }
-
-                        } else {
-                            PrintErro("Failed to open process! Please relaunch as administrator.");
-                            return;
-                        }
-                    }).detach();
+                        }).detach();
+                    }
 
                     if (capturing && !g_pDwmCaptureTextureView) {
                         static size_t count = 0;
