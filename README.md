@@ -30,7 +30,7 @@
 // Make sure u have installed Visual Studio 2019 or later version
 // Open PowerShell and enter a folder prepared for the project, enter the following commands in turn, Enter the following commands in PowerShell
 
-> git clone https://github.com/lainswork/dwm-screen-shot.git
+> git clone https://github.com/Ingan121/dwm-screen-shot.git
 
 > cd dwm-screen-shot
 
@@ -38,14 +38,19 @@
 
 > cd ./build
 
-> devenv dwm-screen-shot.sln /build "Debug|x64" /Project dwm-screen-shot
+> devenv dwm-screen-shot.sln /Project dwm-screen-shot
 
-> cd ../bin/x64/Debug
+> (Change the build target as VS asks, go to the properties of the DirectXTK solution, and change the runtime library option in `C/C++ -> Code generation` to `/MT`.)
+
+> devenv dwm-screen-shot.sln /build "Release|x64" /Project dwm-screen-shot
+
+> cd ../bin/x64/Release
 
 > .\dwm-screen-shot
 
 ````
 Or just build it with the VS GUI. (Used 2022)
+Debug build is somehow broken currently.
 
 ## Demo
 https://user-images.githubusercontent.com/46841563/159519403-597fb25b-c353-46b6-98a6-90b68e83b263.mp4

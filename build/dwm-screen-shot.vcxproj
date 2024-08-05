@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../third_party/imgui/backends;$(ProjectDir)../third_party/imgui;$(ProjectDir)../third_party/raw_pdb/include;$(ProjectDir)../src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../third_party/imgui/backends;$(ProjectDir)../third_party/imgui;$(ProjectDir)../third_party/raw_pdb/include;$(ProjectDir)../third_party/imgui;$(ProjectDir)../third_party/raw_pdb/include;$(ProjectDir)../third_party/DirectXTK/Inc;$(ProjectDir)../src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
