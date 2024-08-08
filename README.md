@@ -4,25 +4,27 @@
 > The code in the imgui display part is a bit ugly....
 ## Features
 
-* ~~Compatible with most Windows 10/11 systems~~
-  * Doesn't seem to work on recent Windows 11 versions
+* Compatible with most Windows 10/11 systems
+  * Confirmed working on Windows 10 21H2 (LTSC 2021), 22H2, and Windows 11 23H2
+  * May not work on recent Windows 11 versions
     * [Mirillis Action](https://mirillis.com/en/products/action.html) (paid, watermarked demo available) is also capable of grabbing DWM screenshots, try that if this doesn't work
+  * DWM hooking is easier on Windows Vista and 7 so you can use a generic D3D recorder on those OSes. Some of them support DWM hooking by default (e.g. Fraps), and some others only require bypassing the built-in blacklist for dwm.exe. You can also make the hidden `DWM Notification Window` visible with AHK, WindowDetective, or something like that, then select/activate that as a target game window to record (Bandicam and OBS work with this).
 * Purposes
   * Bypass various anti-screenshot techniques
     * SetWindowDisplayAffinity
-    * Function hooks (BitBlt, PrintWindow etc.)
+    * Function hooks (BitBlt, PrintWindow, etc.)
     * DRM (Widevine, PlayReady)
       * Note that the whole screen will be scrambled/encrypted if HDCP (2.2?) is being used.
   * Understand how multiplane overlay (MPO) and fullscreen optimization (FSO) works
     * Figure out what are being rendered in MPO (they won't appear in this program's screenshot)
 
 ## Changes from the original repository
-* Translated the whole program to English.
-* Automatically save the taken screenshot to file.
+* Translated the whole program into English.
+* Automatically save the taken screenshot to a file.
 * Automatically run as administrator.
-* Automatically take screenshot on launch.
-* Automatically exit after taking screenshot.
-* Only download symbol once - try deleting dxgi.pdb if it's not working after update.
+* Automatically take a screenshot on launch.
+* Automatically exit after taking a screenshot.
+* Only download the symbol once - try deleting dxgi.pdb if it's not working after a Windows update.
 
 ## Build
 * From console (original repo's method):
