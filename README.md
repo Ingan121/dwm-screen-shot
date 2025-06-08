@@ -14,7 +14,9 @@
     * SetWindowDisplayAffinity
     * Function hooks (BitBlt, PrintWindow, etc.)
     * DRM (Widevine, PlayReady)
-      * Note that the whole screen will be scrambled/encrypted if HDCP (2.2?) is being used.
+      * Note that the whole screen will be scrambled/encrypted if HDCP is being used or the HW protection flag is enabled.
+    * With NVIDIA GPUs, even simple SetWindowDisplayAffinity windows will be omitted from the DWM screenshot. For non-PlayReady use cases, just use the NVIDIA overlay's screenshot feature (NVFBC) with [this mod](https://windhawk.net/mods/shadowplay-do-not-disable) instead.
+    * The above use cases are all tested on an Intel GPU with an internal laptop display.
   * Understand how multiplane overlay (MPO) and fullscreen optimization (FSO) works
     * Figure out what are being rendered in MPO (they won't appear in this program's screenshot)
 
