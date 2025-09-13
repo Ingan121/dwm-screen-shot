@@ -6,6 +6,7 @@
 
 * Compatible with most Windows 10/11 systems
   * Confirmed working on Windows 10 21H2 (LTSC 2021), 22H2, and Windows 11 23H2
+  * Broken on 24H2
   * May not work on recent Windows 11 versions
     * [Mirillis Action](https://mirillis.com/en/products/action.html) (paid, watermarked demo available) is also capable of grabbing DWM screenshots, try that if this doesn't work
   * DWM hooking is easier on Windows Vista and 7 so you can use a generic D3D recorder on those OSes. Some of them support DWM hooking by default (e.g. Fraps), and some others only require bypassing the built-in blacklist for dwm.exe. You can also make the hidden `DWM Notification Window` visible with AHK, WindowDetective, or something like that, then select/activate that as a target game window to record (Bandicam and OBS work with this).
